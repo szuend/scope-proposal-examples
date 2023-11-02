@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <title>SourceMap Scopes Proposal - Examples</title>
+  </head>
+  <body>
+    <h1>01 - Simple</h1>
+    <p>
+        Simple function where input and output scopes match. Only variable names are minified.
+        Base SourceMap created by Terser. Scopes handwritten.
+    </p>
+    <p>
+        <pre>terser -m -o simple.min.js --source-map "includeSources,url=simple.min.js.map" --toplevel simple.js</pre>
+    </p>
+    <script src="./simple.min.js"></script>
+  </body>
+</html>

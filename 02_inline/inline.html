@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <title>SourceMap Scopes Proposal - Examples</title>
+  </head>
+  <body>
+    <h1>02 - Inlining</h1>
+    <p>
+        Inlining over multiple levels. No local variables, only function arguments.
+    </p>
+    <p>
+        <pre>google-closure-compiler --compilation_level ADVANCED inline.js --js_output_file inline.min.js --create_source_map inline.min.js.map --source_map_include_content</pre>
+    </p>
+    <script src="./inline.min.js"></script>
+  </body>
+</html>
