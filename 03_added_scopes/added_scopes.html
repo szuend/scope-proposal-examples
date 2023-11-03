@@ -4,13 +4,26 @@
     <title>SourceMap Scopes Proposal - Examples</title>
   </head>
   <body>
+    <script src="../common/viewer.js"></script>
     <h1>03 - Added Scopes</h1>
     <p>
         Transpiling async/await into generators introduces new scopes.
     </p>
     <p>
-        <pre>tsc</pre>
+        <pre>tsc
+{
+  "compilerOptions": {
+    "lib": ["ES2015", "DOM"],
+    "target": "ES5",
+    "sourceMap": true,
+    "inlineSources": true,
+    "outFile": "added_scopes.min.js"
+  },
+  "files": ["added_scopes.ts"],
+}
+        </pre>
     </p>
+    <source-viewer original="./added_scopes.ts" generated="./added_scopes.min.js" source-map="./added_scopes.min.js.map"></source-viewer>
     <script src="./added_scopes.min.js"></script>
   </body>
 </html>
