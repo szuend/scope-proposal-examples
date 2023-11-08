@@ -1,0 +1,63 @@
+{
+  "scopes": [
+    {
+      "type": "toplevel",
+      "line": 0,
+      "column": 0,
+      "collapse": true,
+      "definition": {
+        "sourceIndex": 0,
+        "startLine": 0,
+        "startColumn": 0,
+        "endLine": 12,
+        "endColumn": 0
+      }
+    },
+    {
+      "type": "function",
+      "line": 0,
+      "column": 18,
+      "name": "addWithMultiply",
+      "definition": {
+        "sourceIndex": 0,
+        "startLine": 1,
+        "startColumn": 44,
+        "endLine": 8,
+        "endColumn": 1
+      },
+      "bindings": [
+        ["arg1", "n"],
+        ["arg2", "t"],
+        ["arg3", "e"],
+        ["intermediate", "r"]
+      ]
+    },
+    {
+      "type": "block",
+      "line": 0,
+      "column": 48,
+      "definition": {
+        "sourceIndex": 0,
+        "startLine": 3,
+        "startColumn": 27,
+        "endLine": 6,
+        "endColumn": 3
+      },
+      "bindings": [
+        ["result", "n"]
+      ]
+    },
+    {
+      "line": 0,
+      "column": 69
+    },
+    {
+      "line": 0,
+      "column": 78
+    },
+    {
+      "line": 0,
+      "column": 86
+    }
+  ]
+}

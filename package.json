@@ -4,9 +4,14 @@
   "description": "",
   "author": "Simon Zünd",
   "license": "BSD-3-Clause",
+  "scripts": {
+    "build": "node encode_scopes.mjs"
+  },
   "devDependencies": {
+    "glob": "^10.3.10",
     "google-closure-compiler": "^20230802.0.0",
     "terser": "^5.24.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "vlq": "^2.0.4"
   }
 }
