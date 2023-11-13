@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <title>SourceMap Scopes Proposal - Examples</title>
+  </head>
+  <body>
+    <script src="../common/viewer.js"></script>
+    <h1>05 - Inlining across modules</h1>
+    <p>
+        Inlining of multiple functions into a module scope. The example aims to show case where
+        the scope chain of the inlined function differs from the scope chain where it got inlined.
+    </p>
+    <p>
+        <pre>google-closure-compiler --compilation_level ADVANCED inline_across_modules.js module.js --js_output_file inline_across_modules.min.js --create_source_map inline_across_modules.min.js.map --source_map_include_content --language_in UNSTABLE</pre>
+    </p>
+    <source-viewer original="./inline_across_modules.js" generated="./inline_across_modules.min.js" source-map="./inline_across_modules.min.js.map"></source-viewer>
+    <script src="./inline_across_modules.min.js"></script>
+  </body>
+</html>
