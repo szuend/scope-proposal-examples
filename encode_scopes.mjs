@@ -138,33 +138,63 @@ class ScopeEncoder {
 }
 
 function encode(sourceMap, scopes) {
-  const encoder = new ScopeEncoder(sourceMap);
+  // const encoder = new ScopeEncoder(sourceMap);
 
-  for (const scope of scopes) {
-    // Encode empty lines until we reach "scope.line".
-    while (encoder.currentLine < scope.line) encoder.finishLine();
+  // for (const scope of scopes) {
+  //   // Encode empty lines until we reach "scope.line".
+  //   while (encoder.currentLine < scope.line) encoder.finishLine();
 
-    encoder.addColumn(scope.column);
+  //   encoder.addColumn(scope.column);
 
-    if ('type' in scope) {
-      // Encode scope start
-      const hasName = 'name' in scope;
-      const hasDefinition = 'definition' in scope;
-      const hasCallsite = 'callsite' in scope;
-      encoder.addFieldFlags(hasName, hasDefinition, 'callsite' in scope);
-      encoder.addInfoFlags(scope.type === 'function',
-          /* inheritParentBindings is always true for JS */ true,
-          /* skip */ false, Boolean(scope.collapse));
-      if (hasName) encoder.addName(scope.name);
-      if (hasDefinition) encoder.addDefinition(scope.definition);
-      if (hasCallsite) encoder.addCallsite(scope.callsite);
-      encoder.addBindings(scope.bindings ?? []);
-    }
+  //   if ('type' in scope) {
+  //     // Encode scope start
+  //     const hasName = 'name' in scope;
+  //     const hasDefinition = 'definition' in scope;
+  //     const hasCallsite = 'callsite' in scope;
+  //     encoder.addFieldFlags(hasName, hasDefinition, 'callsite' in scope);
+  //     encoder.addInfoFlags(scope.type === 'function',
+  //         /* inheritParentBindings is always true for JS */ true,
+  //         /* skip */ false, Boolean(scope.collapse));
+  //     if (hasName) encoder.addName(scope.name);
+  //     if (hasDefinition) encoder.addDefinition(scope.definition);
+  //     if (hasCallsite) encoder.addCallsite(scope.callsite);
+  //     encoder.addBindings(scope.bindings ?? []);
+  //   }
 
-    encoder.finishScope();
+  //   encoder.finishScope();
+  // }
+  // encoder.finishLine();
+  // encoder.encode();
+
+  // Normalize bindings for raw scopes.
+  const s = [];
+  collectScopes(scopes.generatedScopes);
+
+  function collectScopes(scope) {
+    if (!scope) return;
+    s.push(scope);
+    scope.children?.forEach(collectScopes);
   }
-  encoder.finishLine();
-  encoder.encode();
+
+  for (const scope of s) {
+    scope.bindings = scope.bindings.map(binding => {
+      if (!binding) return [];
+      if (Array.isArray(binding)) return binding;
+      return [{expression: binding.expression, from: scope.start, to: scope.end}];
+    });
+  }
+
+  sourceMap.rawOriginalScopes = scopes.originalScopes;
+  sourceMap.rawGeneratedScopes = scopes.generatedScopes;
+}
+
+/** Removes old scope entries */
+function cleanSourceMap(sourceMap) {
+  delete sourceMap.rawOriginalScopes;
+  delete sourceMap.rawGeneratedScopes;
+  delete sourceMap.originalScopes;
+  delete sourceMap.generatedScopes;
+  delete sourceMap.scopes;
 }
 
 (function main() {
@@ -183,8 +213,9 @@ function encode(sourceMap, scopes) {
     process.stdout.write(`Encoding scopes into ${relativeMapPath}... `);
 
     const sourceMap = JSON.parse(fs.readFileSync(sourceMapPath, {encoding: 'utf-8'}));
-    const {scopes} = JSON.parse(fs.readFileSync(scopeJsonPath, {encoding: 'utf-8'}));
+    const scopes = JSON.parse(fs.readFileSync(scopeJsonPath, {encoding: 'utf-8'}));
 
+    cleanSourceMap(sourceMap);
     encode(sourceMap, scopes);
 
     fs.writeFileSync(sourceMapPath, JSON.stringify(sourceMap), {encoding: 'utf-8'});
