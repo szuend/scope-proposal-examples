@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <title>SourceMap Scopes Proposal - Examples</title>
+  </head>
+  <body>
+    <script src="../common/viewer.js"></script>
+    <h1>03 - Transpiled async/await into ES5</h1>
+    <p>
+        Transpiling async/await into generators introduces new scopes.
+    </p>
+    <p>
+        <pre>tsc
+{
+  "compilerOptions": {
+    "lib": ["ES2015", "DOM"],
+    "target": "ES5",
+    "sourceMap": true,
+    "inlineSources": true,
+    "outFile": "async_await.min.js"
+  },
+  "files": ["async_await.ts"],
+}
+        </pre>
+    </p>
+    <source-viewer original="./async_await.ts" generated="./async_await.min.js" source-map="./async_await.min.js.map"></source-viewer>
+    <script src="./async_await.min.js"></script>
+  </body>
+</html>

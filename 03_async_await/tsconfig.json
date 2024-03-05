@@ -4,7 +4,7 @@
     "target": "ES5",
     "sourceMap": true,
     "inlineSources": true,
-    "outFile": "added_scopes.min.js"
+    "outFile": "async_await.min.js"
   },
-  "files": ["added_scopes.ts"],
+  "files": ["async_await.ts"],
 }

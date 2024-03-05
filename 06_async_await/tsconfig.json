@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "lib": ["ES2016", "DOM"],
+    "target": "ES6",
+    "sourceMap": true,
+    "inlineSources": true,
+    "outFile": "async_await.min.js"
+  },
+  "files": ["async_await.ts"],
+}
