@@ -23,7 +23,86 @@ export function encodeVlq(n) {
 export function encodeVlqList(list) {
   return list.map(encodeVlq).join("");
 }
-
+export function encodeSourceMap(textMap, sourceRoot) {
+  let mappings = "";
+  const sources = [];
+  const names = [];
+  let sourcesContent;
+  const state = {
+    line: -1,
+    column: 0,
+    srcFile: 0,
+    srcLine: 0,
+    srcColumn: 0,
+    srcName: 0
+  };
+  for (const mapping of textMap) {
+    let match = mapping.match(/^(\d+):(\d+)(?:\s*=>\s*([^:]+):(\d+):(\d+)(?:@(\S+))?)?$/);
+    if (!match) {
+      match = mapping.match(/^([^:]+):\s*(.+)$/);
+      if (!match) {
+        throw new Error(`Cannot parse mapping "${mapping}"`);
+      }
+      (sourcesContent = sourcesContent ?? [])[getOrAddString(sources, match[1])] = match[2];
+      continue;
+    }
+    const lastState = Object.assign({}, state);
+    state.line = Number(match[1]);
+    state.column = Number(match[2]);
+    const hasSource = match[3] !== void 0;
+    const hasName = hasSource && match[6] !== void 0;
+    if (hasSource) {
+      state.srcFile = getOrAddString(sources, match[3]);
+      state.srcLine = Number(match[4]);
+      state.srcColumn = Number(match[5]);
+      if (hasName) {
+        state.srcName = getOrAddString(names, match[6]);
+      }
+    }
+    if (state.line < lastState.line) {
+      throw "Line numbers must be increasing";
+    }
+    const isNewLine = state.line !== lastState.line;
+    if (isNewLine) {
+      if (lastState.line === -1) {
+        lastState.line = 0;
+      }
+      mappings += ";".repeat(state.line - lastState.line);
+      lastState.column = 0;
+    } else {
+      mappings += ",";
+    }
+    const toEncode = [state.column - lastState.column];
+    if (hasSource) {
+      toEncode.push(state.srcFile - lastState.srcFile, state.srcLine - lastState.srcLine, state.srcColumn - lastState.srcColumn);
+      if (hasName) {
+        toEncode.push(state.srcName - lastState.srcName);
+      }
+    }
+    mappings += encodeVlqList(toEncode);
+  }
+  const sourceMapV3 = { version: 3, mappings, sources, names };
+  if (sourceRoot !== void 0) {
+    sourceMapV3.sourceRoot = sourceRoot;
+  }
+  if (sourcesContent !== void 0) {
+    for (let i = 0; i < sources.length; ++i) {
+      if (typeof sourcesContent[i] !== "string") {
+        sourcesContent[i] = null;
+      }
+    }
+    sourceMapV3.sourcesContent = sourcesContent;
+  }
+  return sourceMapV3;
+  function getOrAddString(array, s) {
+    const index = array.indexOf(s);
+    if (index >= 0) {
+      return index;
+    }
+    array.push(s);
+    return array.length - 1;
+  }
+}
 export class OriginalScopeBuilder {
   #encodedScope = "";
   #lastLine = 0;
@@ -33,7 +112,7 @@ export class OriginalScopeBuilder {
     }
     const lineDiff = line - this.#lastLine;
     this.#lastLine = line;
-    const flags = (name !== void 0 ? 1 : 0) | (variables !== void 0 ? 2 : 0);
+    const flags = name !== void 0 ? 1 : 0;
     this.#encodedScope += encodeVlqList([lineDiff, column, this.#encodeKind(kind), flags]);
     if (name !== void 0) {
       this.#encodedScope += encodeVlq(name);
@@ -124,8 +203,8 @@ export class GeneratedRangeBuilder {
         this.#encodedRange += encodeVlq(bindings);
         continue;
       }
-      this.#encodedRange += encodeVlq(bindings[0].nameIdx);
       this.#encodedRange += encodeVlq(-bindings.length);
+      this.#encodedRange += encodeVlq(bindings[0].nameIdx);
       if (bindings[0].line !== line || bindings[0].column !== column) {
         throw new Error("First binding line/column must match the range start line/column");
       }
