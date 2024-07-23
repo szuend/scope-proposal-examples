@@ -3,7 +3,7 @@ import { GeneratedRangeBuilder, OriginalScopeBuilder } from "../scopes_builder.m
 
 export function scopes(names) {
   const originalScopes = [new OriginalScopeBuilder(names)
-    .start(0, 0, 'global', ['addWithMultiply'])
+    .start(0, 0, 'global', undefined, ['addWithMultiply'])
     .start(1, 24, 'function', 'addWithMultiply', ['arg1', 'arg2', 'arg3', 'intermediate'])
     .start(3, 26, 'block', undefined, ['result'])
     .end(6, 3)
