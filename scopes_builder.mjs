@@ -106,6 +106,11 @@ export function encodeSourceMap(textMap, sourceRoot) {
 export class OriginalScopeBuilder {
   #encodedScope = "";
   #lastLine = 0;
+  #lastKind = 0;
+  #names;
+  constructor(names) {
+    this.#names = names;
+  }
   start(line, column, kind, name, variables) {
     if (this.#encodedScope !== "") {
       this.#encodedScope += ",";
@@ -115,10 +120,10 @@ export class OriginalScopeBuilder {
     const flags = name !== void 0 ? 1 : 0;
     this.#encodedScope += encodeVlqList([lineDiff, column, this.#encodeKind(kind), flags]);
     if (name !== void 0) {
-      this.#encodedScope += encodeVlq(name);
+      this.#encodedScope += encodeVlq(this.#nameIdx(name));
     }
     if (variables !== void 0) {
-      this.#encodedScope += encodeVlqList(variables);
+      this.#encodedScope += encodeVlqList(variables.map((variable) => this.#nameIdx(variable)));
     }
     return this;
   }
@@ -138,16 +143,18 @@ export class OriginalScopeBuilder {
     return result;
   }
   #encodeKind(kind) {
-    switch (kind) {
-      case "global":
-        return 1;
-      case "function":
-        return 2;
-      case "class":
-        return 3;
-      case "block":
-        return 4;
+    const kindIdx = this.#nameIdx(kind);
+    const encodedIdx = kindIdx - this.#lastKind;
+    this.#lastKind = kindIdx;
+    return encodedIdx;
+  }
+  #nameIdx(name) {
+    let idx = this.#names.indexOf(name);
+    if (idx < 0) {
+      idx = this.#names.length;
+      this.#names.push(name);
     }
+    return idx;
   }
 }
 export class GeneratedRangeBuilder {
@@ -161,6 +168,10 @@ export class GeneratedRangeBuilder {
     callsiteLine: 0,
     callsiteColumn: 0
   };
+  #names;
+  constructor(names) {
+    this.#names = names;
+  }
   start(line, column, options) {
     this.#emitLineSeparator(line);
     this.#emitItemSepratorIfRequired();
@@ -199,22 +210,22 @@ export class GeneratedRangeBuilder {
       this.#state.callsiteColumn = column2;
     }
     for (const bindings of options?.bindings ?? []) {
-      if (typeof bindings === "number") {
-        this.#encodedRange += encodeVlq(bindings);
+      if (bindings === void 0 || typeof bindings === "string") {
+        this.#encodedRange += encodeVlq(this.#nameIdx(bindings));
         continue;
       }
       this.#encodedRange += encodeVlq(-bindings.length);
-      this.#encodedRange += encodeVlq(bindings[0].nameIdx);
+      this.#encodedRange += encodeVlq(this.#nameIdx(bindings[0].name));
       if (bindings[0].line !== line || bindings[0].column !== column) {
         throw new Error("First binding line/column must match the range start line/column");
       }
       for (let i = 1; i < bindings.length; ++i) {
-        const { line: line2, column: column2, nameIdx } = bindings[i];
+        const { line: line2, column: column2, name } = bindings[i];
         const emittedLine = line2 - bindings[i - 1].line;
         const emittedColumn2 = column2 - (line2 === bindings[i - 1].line ? bindings[i - 1].column : 0);
         this.#encodedRange += encodeVlq(emittedLine);
         this.#encodedRange += encodeVlq(emittedColumn2);
-        this.#encodedRange += encodeVlq(nameIdx);
+        this.#encodedRange += encodeVlq(this.#nameIdx(name));
       }
     }
     return this;
@@ -237,6 +248,17 @@ export class GeneratedRangeBuilder {
     if (this.#encodedRange !== "" && this.#encodedRange[this.#encodedRange.length - 1] !== ";") {
       this.#encodedRange += ",";
     }
+  }
+  #nameIdx(name) {
+    if (name === void 0) {
+      return -1;
+    }
+    let idx = this.#names.indexOf(name);
+    if (idx < 0) {
+      idx = this.#names.length;
+      this.#names.push(name);
+    }
+    return idx;
   }
   build() {
     const result = this.#encodedRange;
