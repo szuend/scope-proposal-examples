@@ -3,7 +3,7 @@ import { GeneratedRangeBuilder, OriginalScopeBuilder } from "../scopes_builder.m
 
 export function scopes(names) {
   const originalScopes = [new OriginalScopeBuilder(names)
-    .start(0, 0, 'global', undefined, ['addWithMultiply'])
+    .start(0, 0, 'global', undefined, ['globalThis', 'addWithMultiply'])
     .start(1, 24, 'function', 'addWithMultiply', ['arg1', 'arg2', 'arg3', 'intermediate'])
     .start(3, 26, 'block', undefined, ['result'])
     .end(6, 3)
@@ -12,7 +12,7 @@ export function scopes(names) {
     .build()];
   
   const generatedRanges = new GeneratedRangeBuilder(names)
-    .start(0, 0, { definition: { sourceIdx: 0, scopeIdx: 0 }, bindings: [[
+    .start(0, 0, { definition: { sourceIdx: 0, scopeIdx: 0 }, bindings: ['globalThis', [
       {line: 0, column: 0, name: 'n'},
       {line: 0, column: 10, name: undefined},
       {line: 0, column: 78, name: 'n'},
