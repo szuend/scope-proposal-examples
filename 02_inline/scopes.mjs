@@ -6,9 +6,9 @@ export function scopes(names) {
     .start(0, 0, 'global')
     .start(2, 17, 'function', 'log', ['x'])
     .end(4, 1)
-    .start(7, 19, 'function', 'inner', ['x'])
+    .start(7, 19, 'function', 'inner', ['y'])
     .end(9, 1)
-    .start(12, 19, 'function', 'outer', ['x'])
+    .start(12, 19, 'function', 'outer', ['z'])
     .end(14, 1)
     .end(18, 0)
     .build()];

@@ -4,14 +4,14 @@ function log(x) {
   console.log(x);
 }
 
-/** @param {number|string} x */
-function inner(x) {
-  log(x);
+/** @param {number|string} y */
+function inner(y) {
+  log(y);
 }
 
-/** @param {number|string} x */
-function outer(x) {
-  inner(x);
+/** @param {number|string} z */
+function outer(z) {
+  inner(z);
 }
 
 outer(42);
