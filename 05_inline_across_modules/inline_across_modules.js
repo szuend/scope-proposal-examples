@@ -1,12 +1,12 @@
 
 import {Logger} from './module.js';
 
-function inner(x) {
-  Logger.log(x);
+function inner(y) {
+  Logger.log(y);
 }
 
-function outer(x) {
-  inner(x);
+function outer(z) {
+  inner(z);
 }
 
 outer(42);
