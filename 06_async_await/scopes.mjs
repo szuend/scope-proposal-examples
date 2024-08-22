@@ -11,8 +11,9 @@ export function scopes(names) {
   
   const generatedRanges = new GeneratedRangeBuilder(names)
     .start(0, 0, { definition: { sourceIdx: 0, scopeIdx: 0 }, bindings: ['addAndLog']})
-    .start(9, 18, { definition: { sourceIdx: 0, scopeIdx: 1 }, bindings:
-      ['x', 'y', 'z', undefined, undefined, undefined], isScope: true})
+    .start(0, 53, { isScope: true})
+    .end(8, 1)
+    .start(9, 18, { isScope: true})
     .start(10, 53, { definition:  { sourceIdx: 0, scopeIdx: 1}, bindings:
       ['x', 'y', 'z', 'xValue', 'yValue', 'zValue'], isScope: true})
     .end(14, 5)
