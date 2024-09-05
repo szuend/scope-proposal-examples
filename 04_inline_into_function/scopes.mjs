@@ -23,6 +23,8 @@ export function scopes(names) {
     .start(0, 0, { definition: { sourceIdx: 0, scopeIdx: 0 }, bindings: ['globalThis', undefined, undefined, 'a']})
     .start(0, 0, { definition: { sourceIdx: 0, scopeIdx: 1 }, bindings: ['0.5']})
     .start(0, 10, { definition: { sourceIdx: 0, scopeIdx: 6 }, bindings: ['c', 'b'], isScope: true})
+    .start(0, 22, { definition: { sourceIdx: 0, scopeIdx: 1}, bindings: ['0.5']})
+    .end(0, 24)
     .start(0, 70, { definition: { sourceIdx: 0, scopeIdx: 7 }})
     .start(0, 70, { definition: { sourceIdx: 0, scopeIdx: 4}, callsite: { sourceIdx: 0, line: 15, column: 4 }, bindings: ['c']})
     .start(0, 70, { definition: { sourceIdx: 0, scopeIdx: 2}, callsite: { sourceIdx: 0, line: 8, column: 2 }, bindings: ['c']})
