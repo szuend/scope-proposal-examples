@@ -47,7 +47,7 @@ class Viewer extends HTMLElement {
           </div>
         </div>
         <div class="item">
-          <strong>Authored</strong>
+          <strong>Generated</strong>
           <div class="code">
             <pre>${generatedContent}</pre>
           </div>
